@@ -24,7 +24,8 @@
       display: flex;
       flex-direction: column;
     }
-    .sidebar h4 {
+    .sidebar h1 {
+      font-size: 1.4rem;
       font-weight: bold;
       margin-bottom: 2rem;
       text-align: center;
@@ -58,21 +59,20 @@
 
   <!-- Barra lateral -->
   <nav class="sidebar" aria-label="Menú principal">
-    <h4>Mi Bollito</h4>
+    <h1 id="site-title">Mi Bollito</h1>
 
-    <a href="panel.html"><i class="bi bi-house-door"></i> Inicio</a>
-    <a href="inventario.html"><i class="bi bi-box-seam"></i> Inventario</a>
-    <a href="estadisticas.html"><i class="bi bi-graph-up"></i> Estadísticas</a>
-    <a href="domicilios.html"><i class="bi bi-bicycle"></i> Domicilios</a>
-    <a href="estados.html" class="active" aria-current="page"><i class="bi bi-tags"></i> Estados</a>
-
-    <div id="adminSection">
-      <a href="vendedores.html"><i class="bi bi-truck"></i> Vendedores</a>
-      <a href="usuarios.html"><i class="bi bi-people"></i> Usuarios</a>
-    </div>
+    <ul class="nav flex-column" role="menu">
+      <li><a href="panel.html" role="menuitem"><i class="bi bi-house-door"></i> Inicio</a></li>
+      <li><a href="inventario.html" role="menuitem"><i class="bi bi-box-seam"></i> Inventario</a></li>
+      <li><a href="estadisticas.html" role="menuitem"><i class="bi bi-graph-up"></i> Estadísticas</a></li>
+      <li><a href="domicilios.html" role="menuitem"><i class="bi bi-bicycle"></i> Domicilios</a></li>
+      <li><a href="estados.html" class="active" aria-current="page" role="menuitem"><i class="bi bi-tags"></i> Estados</a></li>
+      <li><a href="vendedores.html" role="menuitem"><i class="bi bi-truck"></i> Vendedores</a></li>
+      <li><a href="usuarios.html" role="menuitem"><i class="bi bi-people"></i> Usuarios</a></li>
+    </ul>
 
     <div class="mt-auto">
-      <hr class="text-light">
+      <hr class="text-light" aria-hidden="true">
       <p class="small mb-1">👤 <strong>Juan Pérez</strong></p>
       <p class="small text-light">Administrador</p>
       <a href="#" class="btn btn-light btn-sm w-100 mt-2" role="button">
@@ -82,15 +82,17 @@
   </nav>
 
   <!-- Contenido principal -->
-  <main class="content" id="main-content">
-    <h1>Gestión de Estados</h1>
-    <p>Desde esta sección puedes revisar y controlar los estados de los productos comestibles en inventario.</p>
+  <main class="content" id="main-content" tabindex="-1">
+    <header>
+      <h2>Gestión de Estados</h2>
+      <p>Desde esta sección puedes revisar y controlar los estados de los productos comestibles en inventario.</p>
+    </header>
 
     <section aria-labelledby="tabla-estados">
-      <h2 id="tabla-estados" class="mt-4">Tabla de Estados</h2>
+      <h3 id="tabla-estados" class="mt-4">Tabla de Estados</h3>
 
       <div class="table-responsive">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped" role="table">
           <caption>Listado de estados de productos</caption>
           <thead class="table-light">
             <tr>
@@ -108,7 +110,7 @@
           </thead>
           <tbody>
             <tr>
-              <td>1</td>
+              <th scope="row">1</th>
               <td>Entrada</td>
               <td>50</td>
               <td>30</td>
@@ -118,12 +120,12 @@
               <td>Reabastecimiento</td>
               <td class="text-success">Correcto</td>
               <td>
-                <button class="btn btn-sm btn-warning" aria-label="Editar estado 1"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" aria-label="Eliminar estado 1"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-sm btn-warning" aria-label="Editar estado número 1"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                <button class="btn btn-sm btn-danger" aria-label="Eliminar estado número 1"><i class="bi bi-trash" aria-hidden="true"></i></button>
               </td>
             </tr>
             <tr>
-              <td>2</td>
+              <th scope="row">2</th>
               <td>Salida</td>
               <td>10</td>
               <td>5</td>
@@ -133,8 +135,8 @@
               <td>Venta minorista</td>
               <td class="text-danger">Error: stock insuficiente</td>
               <td>
-                <button class="btn btn-sm btn-warning" aria-label="Editar estado 2"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" aria-label="Eliminar estado 2"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-sm btn-warning" aria-label="Editar estado número 2"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                <button class="btn btn-sm btn-danger" aria-label="Eliminar estado número 2"><i class="bi bi-trash" aria-hidden="true"></i></button>
               </td>
             </tr>
           </tbody>
@@ -147,3 +149,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
