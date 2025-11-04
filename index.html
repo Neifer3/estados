@@ -1,146 +1,198 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Bollito - Panel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestión de Estados - Inventario</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #f4e8d1;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-    }
-    .sidebar {
-      width: 240px;
-      background-color: #a0522d;
-      height: 100vh;
-      color: #fff;
-      position: fixed;
-      top: 0; left: 0;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar h4 {
-      font-weight: bold;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    .sidebar a {
-      color: #fff;
-      text-decoration: none;
-      display: block;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-bottom: 5px;
-      transition: background 0.2s;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      background-color: #8b4513;
-    }
-    .content {
-      margin-left: 260px;
-      padding: 20px;
-      flex: 1;
-    }
+    body { padding: 20px; }
+    .table-fixed { overflow-x:auto; }
   </style>
 </head>
 <body>
+  <div class="container">
+    <header class="d-flex align-items-center mb-4">
+      <h1 class="me-auto">Tabla de Estados - Inventario</h1>
+      <!-- Aquí en PHP podía ir: echo $_SESSION['usuario'] -->
+      <div>Usuario: <strong><!-- PHP: nombre_usuario --></strong></div>
+    </header>
 
-<div class="sidebar">
-  <h4>Mi Bollito</h4>
+    <!-- Mensajes (antes: flash messages de PHP) -->
+    <div id="messages">
+      <!-- Placeholder: Aquí se muestran mensajes de éxito/error -->
+      <!-- Ej: <div class="alert alert-success">Registro eliminado</div> -->
+    </div>
 
-  <a href="panel.php"><i class="bi bi-house-door"></i> Inicio</a>
-  <a href="inventario.php"><i class="bi bi-box-seam"></i> Inventario</a>
-  <a href="estadisticas.php"><i class="bi bi-graph-up"></i> Estadísticas</a>
-  <a href="domicilios.php"><i class="bi bi-bicycle"></i> Domicilios</a>
-  <a href="estados.php"><i class="bi bi-tags"></i> Estados</a>
+    <!-- Botón para agregar nuevo estado/movimiento -->
+    <div class="mb-3">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd">Agregar movimiento</button>
+    </div>
 
-  <?php if ($_SESSION['rol'] === 'administrador'): ?>
-    <a href="vendedores.php"><i class="bi bi-truck"></i> Vendedores</a>
-    <a href="usuarios.php"><i class="bi bi-people"></i> Usuarios</a>
-  <?php endif; ?>
-
-  <div class="mt-auto">
-    <hr class="text-light">
-    <p class="small mb-1">👤 <?= htmlspecialchars($_SESSION['nombre']) ?></p>
-    <p class="small text-light"><?= $_SESSION['rol'] ?></p>
-    <a href="logout.php" class="btn btn-light btn-sm w-100 mt-2">
-      <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </a>
-  </div>
-</div>
-
-
-
-<div class="container-fluid">
-  <div class="card p-4 card-style">
-    <h3 class="mb-4">📦 Estado de los Productos</h3>
-
-    <?php if (isset($mensaje)): ?>
-      <div class="alert alert-success"><?= htmlspecialchars($mensaje) ?></div>
-    <?php endif; ?>
-
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
+    <!-- Tabla de movimientos / estados -->
+    <div class="table-responsive table-fixed">
+      <table class="table table-striped table-bordered">
         <thead class="table-light">
           <tr>
-            <th style="width: 70px;">#</th>
-            <th>Nombre del Producto</th>
-            <th style="width: 200px;">Estado</th>
-            <th style="width: 180px;">Última Actualización</th>
-            <th style="width: 150px;">Acción</th>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Stock A inicial</th>
+            <th>Stock B inicial</th>
+            <th>Cantidad</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Motivo</th>
+            <th>Esperado A</th>
+            <th>Esperado B</th>
+            <th>Observado A</th>
+            <th>Observado B</th>
+            <th>Resultado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <?php if ($result->num_rows === 0): ?>
-            <tr><td colspan="5" class="text-center">No hay productos registrados.</td></tr>
-          <?php else: $i = 1; while ($row = $result->fetch_assoc()): ?>
-            <tr>
-              <td><?= $i++ ?></td>
-              <td><?= htmlspecialchars($row['producto']) ?></td>
-              <td>
-                <form method="POST" class="d-flex">
-                  <input type="hidden" name="id_producto" value="<?= $row['id_producto'] ?>">
-                  <select name="estado_producto" class="form-select form-select-sm me-2">
-                    <?php 
-                      $estados = ['En proceso', 'Finalizado', 'Detenido', 'En espera'];
-                      foreach ($estados as $estado) {
-                        $selected = ($row['estado_producto'] === $estado) ? 'selected' : '';
-                        echo "<option value='$estado' $selected>$estado</option>";
-                      }
-                    ?>
-                  </select>
-                  <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
-                </form>
-              </td>
-              <td><?= $row['fecha_registro'] ? $row['fecha_registro'] : '-' ?></td>
-              <td>
-                <?php
-                $color = match ($row['estado_producto']) {
-                    'Finalizado' => 'success',
-                    'En proceso' => 'warning',
-                    'Detenido' => 'danger',
-                    'En espera' => 'secondary',
-                    default => 'light'
-                };
-                ?>
-                <span class="badge bg-<?= $color ?>"><?= htmlspecialchars($row['estado_producto'] ?? 'Sin estado') ?></span>
-              </td>
-            </tr>
-          <?php endwhile; endif; ?>
+          <!--
+            Aquí iban las filas generadas con PHP: foreach($movimientos as $m) { ... }
+            Reemplazo por filas de ejemplo estáticas; tu backend debe inyectar las reales.
+          -->
+          <tr>
+            <td>1</td>
+            <td>ENTRADA</td>
+            <td>50</td>
+            <td>30</td>
+            <td>30</td>
+            <td>A</td>
+            <td>B</td>
+            <td>Abastecimiento</td>
+            <td>20</td>
+            <td>60</td>
+            <td>20</td>
+            <td>60</td>
+            <td class="text-success">OK</td>
+            <td>
+              <!-- En PHP: url_for('edit', id=m.id) o <a href="edit.php?id=..."> -->
+              <a href="#" class="btn btn-sm btn-warning">Editar</a>
+              <!-- Si tu delete usa POST, pon un form; si usa GET, link directo -->
+              <form class="d-inline" method="post" action="/delete">
+                <input type="hidden" name="id" value="1">
+                <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('Eliminar registro 1?')">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+
+          <!-- fila conflictiva (ejemplo que produce revisión) -->
+          <tr>
+            <td>3</td>
+            <td>SALIDA</td>
+            <td>5</td>
+            <td>30</td>
+            <td>100</td>
+            <td>A</td>
+            <td></td>
+            <td>Venta/Salida</td>
+            <td>-95</td>
+            <td>30</td>
+            <td>5</td>
+            <td>30</td>
+            <td class="text-danger">Error: stock insuficiente</td>
+            <td>
+              <a href="#" class="btn btn-sm btn-info">Ver</a>
+              <a href="#" class="btn btn-sm btn-secondary">Revisar</a>
+            </td>
+          </tr>
+
+          <!-- Más filas dinámicas aquí -->
         </tbody>
       </table>
     </div>
-  </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal para Agregar movimiento -->
+    <div class="modal fade" id="modalAdd" tabindex="-1" aria-labelledby="modalAddLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="formAdd" method="post" action="/add">
+          <!-- Si tu backend espera POST a /add -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalAddLabel">Agregar movimiento</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-2">
+                <label class="form-label">Tipo</label>
+                <select name="tipo" class="form-select" required>
+                  <option value="ENTRADA">ENTRADA</option>
+                  <option value="SALIDA">SALIDA</option>
+                  <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                  <option value="AJUSTE(+)">AJUSTE(+)</option>
+                  <option value="AJUSTE(-)">AJUSTE(-)</option>
+                </select>
+              </div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label">Stock A inicial</label>
+                  <input type="number" name="stock_a" class="form-control" min="0" required>
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Stock B inicial</label>
+                  <input type="number" name="stock_b" class="form-control" min="0">
+                </div>
+              </div>
+              <div class="mt-2">
+                <label class="form-label">Cantidad</label>
+                <input type="number" name="cantidad" class="form-control" min="1" required>
+              </div>
+              <div class="row g-2 mt-2">
+                <div class="col-6">
+                  <label class="form-label">Origen</label>
+                  <input type="text" name="origen" class="form-control">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Destino</label>
+                  <input type="text" name="destino" class="form-control">
+                </div>
+              </div>
+              <div class="mt-2">
+                <label class="form-label">Motivo</label>
+                <input type="text" name="motivo" class="form-control" required>
+              </div>
+              <!-- Aquí tu PHP podía validar y mostrar errores; en HTML estático se hace con JS o backend -->
+              <div id="addErrors" class="text-danger mt-2"></div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Pie -->
+    <footer class="mt-4">
+      <small class="text-muted">Sistema de Inventario - Tabla de Estados (versión HTML)</small>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Si quieres, aquí añades JS para validar antes de enviar o para cargar filas vía fetch -->
+  <script>
+    // Ejemplo: validar cantidad > 0 antes de enviar
+    document.getElementById('formAdd')?.addEventListener('submit', function(e){
+      const cantidad = Number(this.cantidad.value || 0);
+      if (cantidad <= 0) {
+        e.preventDefault();
+        document.getElementById('addErrors').textContent = 'La cantidad debe ser mayor que 0';
+        return false;
+      }
+      // Si tu back-end es PHP, el form enviará por POST a /add y el PHP debe procesar.
+    });
+  </script>
 </body>
 </html>
+
+
 
 
 
