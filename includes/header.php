@@ -1,12 +1,3 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
-if (!isset($_SESSION['nombre'])) {
-  header("Location: login.php");
-  exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -59,28 +50,40 @@ if (!isset($_SESSION['nombre'])) {
 </head>
 <body>
 
-<div class="sidebar">
-  <h4>Mi Bollito</h4>
+  <!-- Sidebar principal -->
+  <div class="sidebar">
+    <h4>Mi Bollito</h4>
 
-  <a href="panel.php"><i class="bi bi-house-door"></i> Inicio</a>
-  <a href="inventario.php"><i class="bi bi-box-seam"></i> Inventario</a>
-  <a href="estadisticas.php"><i class="bi bi-graph-up"></i> Estadísticas</a>
-  <a href="domicilios.php"><i class="bi bi-bicycle"></i> Domicilios</a>
-  <a href="estados.php"><i class="bi bi-tags"></i> Estados</a>
+    <a href="panel.html"><i class="bi bi-house-door"></i> Inicio</a>
+    <a href="inventario.html"><i class="bi bi-box-seam"></i> Inventario</a>
+    <a href="estadisticas.html"><i class="bi bi-graph-up"></i> Estadísticas</a>
+    <a href="domicilios.html"><i class="bi bi-bicycle"></i> Domicilios</a>
+    <a href="estados.html"><i class="bi bi-tags"></i> Estados</a>
 
-  <?php if ($_SESSION['rol'] === 'administrador'): ?>
-    <a href="vendedores.php"><i class="bi bi-truck"></i> Vendedores</a>
-    <a href="usuarios.php"><i class="bi bi-people"></i> Usuarios</a>
-  <?php endif; ?>
+    <!-- Sección visible solo para administradores -->
+    <!-- PHP original: if ($_SESSION['rol'] === 'administrador') -->
+    <div id="adminSection">
+      <a href="vendedores.html"><i class="bi bi-truck"></i> Vendedores</a>
+      <a href="usuarios.html"><i class="bi bi-people"></i> Usuarios</a>
+    </div>
 
-  <div class="mt-auto">
-    <hr class="text-light">
-    <p class="small mb-1">👤 <?= htmlspecialchars($_SESSION['nombre']) ?></p>
-    <p class="small text-light"><?= $_SESSION['rol'] ?></p>
-    <a href="logout.php" class="btn btn-light btn-sm w-100 mt-2">
-      <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </a>
+    <div class="mt-auto">
+      <hr class="text-light">
+      <p class="small mb-1">👤 <strong><!-- Aquí iría el nombre del usuario (PHP: $_SESSION['nombre']) --> Juan Pérez</strong></p>
+      <p class="small text-light"><!-- Aquí iría el rol del usuario --> administrador</p>
+      <a href="logout.html" class="btn btn-light btn-sm w-100 mt-2">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+      </a>
+    </div>
   </div>
-</div>
 
-<div class="content">
+  <!-- Contenido principal -->
+  <div class="content">
+    <h2>Bienvenido al panel de control</h2>
+    <p>Desde aquí puedes gestionar el inventario, estados, domicilios y más.</p>
+    <p class="text-muted">Esta es una versión HTML estática (sin PHP ni sesiones activas).</p>
+  </div>
+
+</body>
+</html>
+
